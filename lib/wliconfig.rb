@@ -147,7 +147,7 @@ module WLIConfig
     op = OptionParser.new
 
 
-    op.banner = "wliconfig -- The 3rd party configuration cli for BUFFALO INC wireless lan adopters are called 'WLI' series.\n\nUsage: wliconfig [options...]"
+    op.banner = "wliconfig -- The 3rd party configuration cli for BUFFALO INC wireless lan adapters are called 'WLI' series.\n\nUsage: wliconfig [options...]"
     op.version = "1.0.0"
 
     op.on('-f FILE', 'Read options from specified YAML file.'){|v| container[:fname] = v}

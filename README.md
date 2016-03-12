@@ -1,6 +1,6 @@
 # wliconfig
 
-This programm is the 3rd party configuration cli for BUFFALO INC wireless lan adopters are called 'WLI' series.
+This programm is the 3rd party configuration cli for BUFFALO INC wireless lan adapters are called 'WLI' series.
 
 `wliconfig` is tiny utility that change connect wireless lan network by scraping configuration page of 'WLI' terminal.
 
