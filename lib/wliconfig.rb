@@ -3,7 +3,7 @@ require 'yaml'
 require 'mechanize'
 require 'logger'
 
-$logger = Logger.new(STDOUT)
+$wlog = Logger.new(STDOUT)
 
 module WLIConfig
   #
@@ -23,29 +23,29 @@ module WLIConfig
 
       def change_config(config)
         # print url
-        $logger.info("Attempt to access to '#{@url}'.")
+        $wlog.info("Attempt to access to '#{@url}'.")
 
         agent = create_agent()
 
         # fetch index page
-        $logger.info("Begin fetch index page.")
+        $wlog.info("Begin fetch index page.")
         page = agent.get(@url)
         page = fetch_main_iframe(page)
         page = page.links_with(:href => 'index.html?page=wizard_func_wlan_sta_crypto.html')[0].click
-        $logger.info("End fetch index page.")
+        $wlog.info("End fetch index page.")
 
         # fetch config page and submit config
-        $logger.info("Begin fetch config page and submit config.")
+        $wlog.info("Begin fetch config page and submit config.")
         page = fetch_main_iframe(page)
         form = page.forms[0]
         fill_config_form(form, config)
         page = form.submit
-        $logger.info("End fetch ocnfig page and submit config.")
+        $wlog.info("End fetch ocnfig page and submit config.")
 
         # fetch finish page
-        $logger.info("Begin fetch complete page.")
+        $wlog.info("Begin fetch complete page.")
         page = page.forms[0].submit
-        $logger.info("End fetch complete page.")
+        $wlog.info("End fetch complete page.")
       end
 
       def create_agent()
@@ -85,7 +85,7 @@ module WLIConfig
     def update_from_file(fname)
       return unless fname
       if FileTest.exist?(fname)
-        $logger.info("Configuration file #{fname} does exist.")
+        $wlog.info("Configuration file #{fname} does exist.")
         open(fname){|f|
           yaml = YAML.load(f.read)
           @addr ||= yaml["addr"]
@@ -97,7 +97,7 @@ module WLIConfig
         }
         true
       else
-        $logger.warn("Configuration file #{fname} does not exist.")
+        $wlog.warn("Configuration file #{fname} does not exist.")
         false
       end
     end
@@ -171,45 +171,43 @@ module WLIConfig
 
     opts
   end
-end
 
-def main(argv)
-  include WLIConfig
+  def main(argv)
+    container = {}
+    parser = create_option_parser(container)
+    parser.parse(argv)
 
-  container = {}
-  parser = create_option_parser(container)
-  parser.parse(argv)
+    unless $debug
+      $wlog.level = Logger::INFO
+      $wlog.formatter = proc{|severity, datetime, progname, msg| "#{msg}\n"}
+    end
 
-  unless $debug
-    $logger.level = Logger::INFO
-    $logger.formatter = proc{|severity, datetime, progname, msg| "#{msg}\n"}
+    $wlog.info("Start processing...")
+
+    $wlog.debug("container:" + container.inspect)
+
+    options = create_options(container)
+    $wlog.debug("options:" + options.inspect)
+
+    unless options.valid?
+      raise "Some options were not specified. Please read usage 'wliconfig --help'."
+    end
+
+    product = ProductFactory.create(options.product, options.addr, options.user, options.pass)
+    $wlog.debug("product:" + product.inspect)
+
+    config = WLANConfig.new(options.wlan_ssid, options.wlan_mode, options.wlan_key)
+    $wlog.debug("config:" + config.inspect)
+
+    product.change_config(config)
+
+    $wlog.info("Complete processing successfully.")
+
+    return 0
+  rescue
+    $wlog.error($!)
+    $wlog.error("Processing failure.")
+
+    return 1
   end
-
-  $logger.info("Start processing...")
-
-  $logger.debug("container:" + container.inspect)
-
-  options = create_options(container)
-  $logger.debug("options:" + options.inspect)
-
-  unless options.valid?
-    raise "Some options were not specified."
-  end
-
-  product = ProductFactory.create(options.product, options.addr, options.user, options.pass)
-  $logger.debug("product:" + product.inspect)
-
-  config = WLANConfig.new(options.wlan_ssid, options.wlan_mode, options.wlan_key)
-  $logger.debug("config:" + config.inspect)
-
-  product.change_config(config)
-
-  $logger.info("Complete processing successfully.")
-
-  return 0
-rescue
-  $logger.error($!)
-  $logger.error("Processing failure.")
-
-  return 1
 end
