@@ -3,6 +3,8 @@ require 'yaml'
 require 'mechanize'
 require 'logger'
 
+$logger = Logger.new(STDOUT)
+
 module WLIConfig
   #
   # Product classes
@@ -145,7 +147,7 @@ module WLIConfig
     op = OptionParser.new
 
 
-    op.banner = "wliconfig -- The 3rd party configuration cli for BUFFALO INC wireless lan adopters are 'WLI' series.\n\nUsage: wliconfig [options...]"
+    op.banner = "wliconfig -- The 3rd party configuration cli for BUFFALO INC wireless lan adopters are called 'WLI' series.\n\nUsage: wliconfig [options...]"
     op.version = "1.0.0"
 
     op.on('-f FILE', 'Read options from specified YAML file.'){|v| container[:fname] = v}
@@ -170,8 +172,6 @@ module WLIConfig
     opts
   end
 end
-
-$logger = Logger.new(STDOUT)
 
 def main(argv)
   include WLIConfig
@@ -213,6 +213,3 @@ rescue
 
   return 1
 end
-
-ret = main(ARGV)
-exit ret
