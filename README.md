@@ -1,6 +1,6 @@
 # wliconfig
 
-This programm is the 3rd party configuration cli for BUFFALO INC wireless lan adapters are called 'WLI' series.
+This program is the 3rd party configuration cli for BUFFALO INC wireless lan adapters are called 'WLI' series.
 
 `wliconfig` is tiny utility that change connect wireless lan network by scraping configuration page of 'WLI' terminal.
 
@@ -84,7 +84,7 @@ dhclient eth0
 -u, --user USERNAME  BASIC認証のユーザ名を指定します。 (例. admin)
 -p, --pass PASSWORD  BASIC認証のパスワードを指定します。 (例. password)
 -s, --wlan-ssid SSID 接続するワイヤレスLANのSSIDを指定します。 
--m, --wlan-mode MODE 接続するワイヤレスLANの認証方式を指定します。 (none, wep_hex, wep_char, tkip, aes, wpa2_tkip or wpa2_aes が有効です)
+-m, --wlan-mode MODE 接続するワイヤレスLANの認証方式を指定します。 (none, wep_hex, wep_char, tkip, aes, wpa2_tkip または wpa2_aes が有効です)
 -k, --wlan-key KEY   接続するワイヤレスLANのキーやパスフレーズを指定します。
     --debug          開発者向け。デバッグモードを有効にします。
 ~~~~
