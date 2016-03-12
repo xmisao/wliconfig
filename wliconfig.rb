@@ -108,6 +108,10 @@ module WLIConfig
       @wlan_mode = map[:wlan_mode] || @wlan_mode
       @wlan_key = map[:wlan_key] || @wlan_key
     end
+
+    def valid?
+      [@addr, @user, @pass, @wlan_ssid, @wlan_mode, @wlan_key].count(nil) == 0
+    end
   end
 
   #
@@ -188,6 +192,10 @@ def main(argv)
   options = create_options(container)
   $logger.debug("options:" + options.inspect)
 
+  unless options.valid?
+    raise "Some options were not specified."
+  end
+
   product = ProductFactory.create(options.product, options.addr, options.user, options.pass)
   $logger.debug("product:" + product.inspect)
 
@@ -198,12 +206,12 @@ def main(argv)
 
   $logger.info("Complete processing successfully.")
 
-  0
+  return 0
 rescue
   $logger.error($!)
   $logger.error("Processing failure.")
 
-  1
+  return 1
 end
 
 ret = main(ARGV)
